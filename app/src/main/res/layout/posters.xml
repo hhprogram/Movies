@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/posters"
+    android:layout_width="wrap_content" android:layout_height="match_parent"
+    android:numColumns="@integer/grid_columns"
+    android:background="@android:color/background_dark">
+
+</GridView>
+<!--did match_parent for the layout height as if i did wrap_content then if didn't have enough
+favorites to fill entire screen - then rest of it would just be white-->

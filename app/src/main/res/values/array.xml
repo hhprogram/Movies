@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="preset">Preset Options
+        <item>@string/np</item>
+        <item>@string/tr</item>
+        <item>@string/up</item>
+        <item>@string/pop</item>
+        <item>@string/fav</item>
+    </string-array>
+    <string-array name="preset_values">Preset Values
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+    <!--Note keep this as string array, preferences XML was crashing and not able to load
+    when this was an integer array-->
+
+</resources>
