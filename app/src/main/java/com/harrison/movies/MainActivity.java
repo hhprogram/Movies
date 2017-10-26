@@ -126,42 +126,31 @@ public class MainActivity extends AppCompatActivity implements AsyncListener
         grid = (GridView) this.findViewById(R.id.posters);
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         String selectedPref = pref.getString(getString(R.string.options), "0");
+        String titleSearch = pref.getString(getString(R.string.search_title),
+                getString(R.string.default_value));
+        String actorSearch = pref.getString(getString(R.string.search_actor),
+                getString(R.string.default_value));
+//        this gets the table_name for the desired list preference selected
         String webRequest = list.get(Integer.parseInt(selectedPref));
+//        this sets the title of the action bar to corresponding title
         getSupportActionBar().setTitle(titles.get(webRequest));
         //declaring an item click listener class right here. Method's argument is a onItem click
         //listener object, and just declaring the whole class object within the argument for ease
-        if (selectedPref != "4") {
-            grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                            @Override
-                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                Toast.makeText(MainActivity.this, movies.get(i).getTitle(), Toast.LENGTH_SHORT)
-                                                        .show();
-                                                Bundle bundle = new Bundle();
-                                                bundle = popBundle(bundle, i);
-                                                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                                                intent.putExtras(bundle);
-                                                if (bundle.isEmpty() || !bundle.containsKey(getString(R.string.bundle_movies))
-                                                        || !bundle.containsKey(getString(R.string.click_position))) {
-                                                    Log.d(TAG, "onItemClick: Bundle being sent to detailed activity is "
-                                                            + "either emtpy or missing an item");
-                                                    Log.d(TAG, "onItemClick: movies key: " + getString(R.string.bundle_movies) + " click key: " + getString(R.string.click_position));
-                                                }
-                                                startActivity(intent);
-                                            }
-                                        }
-            );
-        } else {
 
+        if (titleSearch != getString(R.string.default_value)) {
+//            call helper function to retrieve movies based on a movie title search. Add the string
+//            search as logic for a MovieDB object is if the doinBackground() method has params > 1
+//            then it assumes it is an editText search and adding a string String will gurantee
+//            that this will be true
+            popMovieGrid(getString(R.string.movie_api) + " " + titleSearch, 1);
+        } else if (actorSearch != getString(R.string.default_value)) {
+            popMovieGrid(getString(R.string.person_api) + " " + actorSearch, 1);
         }
-
-        //only initilized the cursorLoader if preference is to favorites
-        if (selectedPref.equals(getString(R.string.fav_pref_value))) {
-            getLoaderManager().initLoader(CURSOR_ID, null, this);
-        } else if (!isOnline()) {
-            Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_LONG).show();
-            setContentView(R.layout.no_connection);
-        } else {
-            popMovies(selectedPref);
+//      checking if not editText preference then check if not favorites set a gridView listener
+//        to launch the details activity (note: we set up a gridView listener on onLoadFinished
+//        if it is favorites.
+        else if (selectedPref != "4") {
+            popMovieGrid(selectedPref, 0);
         }
     }
 
@@ -294,15 +283,66 @@ public class MainActivity extends AppCompatActivity implements AsyncListener
         favAdapter.swapCursor(null);
     }
 
-
-
     /**
-     * Method called to populate gridView with movies sorted depending editText search option, will
-     * be called when a preferenceChange has been detected for an EditTextPreference field
+     * Helper function that populates the movie grid if using the movieDB api (vs populating from
+     * local mysql database)
+     * @param input - the string input used to help populate the movie grid
+     * @param type - type of data to populate the grid with. '0' - denotes it is populating the
+     *             grid using pre defined lists like topRated vs. '1' denotes populating grid via
+     *             search (actor or movie title)
      */
-    private void popMoviesSearch(String option) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+    private void popMovieGrid (String input, int type) {
+        if (type == 0) {
+            //only initilized the cursorLoader if preference is to favorites
+            if (input.equals(getString(R.string.fav_pref_value))) {
+                getLoaderManager().initLoader(CURSOR_ID, null, this);
+            } else if (!isOnline()) {
+                Toast.makeText(this, getString(R.string.no_connection), Toast.LENGTH_LONG).show();
+                setContentView(R.layout.no_connection);
+            } else {
+                popMovies(input);
+            }
+        } else if (type == 1) {
+            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = pref.edit();
+            int startSearchIndex = input.indexOf(' ');
+            String searchType = input.substring(0, startSearchIndex);
+            if (searchType.equals(getString(R.string.person_api))) {
+                editor.putString(getString(R.string.search_actor), getString(R.string.default_value));
+            } else if (searchType.equals(getString(R.string.movie_api))) {
+                editor.putString(getString(R.string.search_title), getString(R.string.default_value));
+            }
+            MovieDB searchTask = new MovieDB(this, this, mUri);
+            try {
+                ArrayList<Movie> searchedMovies = searchTask.execute(input).get();
+            } catch (InterruptedException e) {
+                Log.d(TAG, "popMoviesSearch: asyncTask failed");
+            } catch (ExecutionException e) {
+                Log.d(TAG, "popMoviesSearch: asyncTask failed");
+            }
+        }
+//        set the onItem listeners the same way no matter if using pre set list or search
+        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                            Toast.makeText(MainActivity.this, movies.get(i).getTitle(), Toast.LENGTH_SHORT)
+                                                    .show();
+                                            Bundle bundle = new Bundle();
+                                            bundle = popBundle(bundle, i);
+                                            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                                            intent.putExtras(bundle);
+                                            if (bundle.isEmpty() || !bundle.containsKey(getString(R.string.bundle_movies))
+                                                    || !bundle.containsKey(getString(R.string.click_position))) {
+                                                Log.d(TAG, "onItemClick: Bundle being sent to detailed activity is "
+                                                        + "either emtpy or missing an item");
+                                                Log.d(TAG, "onItemClick: movies key: " + getString(R.string.bundle_movies) + " click key: " + getString(R.string.click_position));
+                                            }
+                                            startActivity(intent);
+                                        }
+                                    }
+        );
     }
+
 
     /**
      * Method that populates the adapter with the requested movies
@@ -354,6 +394,8 @@ public class MainActivity extends AppCompatActivity implements AsyncListener
      * @param uri - the uri to which we want to insert our web requested data
      */
     private void fetchData(String pref, Uri uri) {
+//        note: don't actually need to feed in the URI into the MovieDB task anymore (that was with
+//        older version
         MovieDB movieTask = new MovieDB(this, this, uri);
         try {
             movies = movieTask.execute(pref).get();

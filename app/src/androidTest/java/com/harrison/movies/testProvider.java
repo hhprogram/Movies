@@ -86,6 +86,7 @@ public class testProvider extends ProviderTestCase2<movieProvider>{
         setContext(InstrumentationRegistry.getTargetContext());
         contentResolver = getMockContentResolver();
         movieProvider testprovider = getProvider();
+//        this a custom method from movieProvider to help with testing
         movieDBHelper helper = testprovider.getmDBhelperForTest();
         testDB = helper.getWritableDatabase();
         //testDB = getProvider().getmDBhelperForTest().getWritableDatabase();

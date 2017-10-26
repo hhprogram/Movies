@@ -46,6 +46,8 @@ public class movieContract {
      * implements BaseColumns which has a default _ID variable for primary key usage (which auto
      * increments) as well as a count variable to keep track of number of data rows. Which means
      * I do not have to explicitly define either one in the static class
+     *
+     *
      */
     public static final class TopRated implements BaseColumns {
         //buildUpon creates a new URI builder object that starts from the URI contents of

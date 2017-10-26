@@ -22,7 +22,9 @@ public class SettingsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+//        see right below for SettingsFragment class construction.
         SettingsFragment mPrefsFragment = new SettingsFragment();
+//        then we begin the fragment that is a special PreferenceFragment
         getFragmentManager().beginTransaction().replace(android.R.id.content, mPrefsFragment)
                 .commit();
     }
@@ -32,9 +34,10 @@ public class SettingsActivity extends AppCompatActivity
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+//            this basically inflates the layout used when going to the preferences page (ie
+//            once someone clicks the settings button
             addPreferencesFromResource(R.xml.preferences);
         }
-
 
 
     }
@@ -58,7 +61,7 @@ public class SettingsActivity extends AppCompatActivity
     @Override
     public void onPause() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        pref.registerOnSharedPreferenceChangeListener(this);
+        pref.unregisterOnSharedPreferenceChangeListener(this);
         super.onPause();
     }
 

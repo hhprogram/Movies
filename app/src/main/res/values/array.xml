@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string-array name="preset">Preset Options
         <item>@string/np</item>
         <item>@string/tr</item>
@@ -7,6 +8,9 @@
         <item>@string/pop</item>
         <item>@string/fav</item>
     </string-array>
+    <!--the below array is used for the ListPreference (see preferences.xml) each item is for
+    each preference in the ListPreference. Use the values to denote which preference is selected
+    each one aligns with the above string array-->
     <string-array name="preset_values">Preset Values
         <item>0</item>
         <item>1</item>

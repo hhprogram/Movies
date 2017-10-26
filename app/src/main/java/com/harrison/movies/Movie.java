@@ -100,7 +100,10 @@ public class Movie implements Comparable<Movie>, Parcelable {
         dest.writeInt(this._movieDBid);
     }
 
-    static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+//    had to be public static final. Before was just static final and was giving an error because
+//    i think outside classes couldn't access he CREATOR object which you need to in order to
+//    parcelize something
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
         public Movie createFromParcel (Parcel in) {
             return new Movie(in);
         }

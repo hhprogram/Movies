@@ -52,6 +52,7 @@
     <string name="persom_movie_api">movie_credits</string>
     <string name="poster_api">poster_path</string>
     <string name="version_api">3</string>
+    <string name="default_value">Type search here...</string>
     <!--JSON string web keys-->
     <string name="movie_title_json">original_title</string>
     <string name="vote_json">vote_average</string>

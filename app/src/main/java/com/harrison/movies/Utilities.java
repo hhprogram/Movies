@@ -125,7 +125,7 @@ public class Utilities {
     static final String PERSON_MOVIE = MainActivity.getContext().getResources()
             .getString(R.string.persom_movie_api);
     //v3 API key for movieDB
-    static final String KEY_V3 = "???use your own";
+    static final String KEY_V3 = "get your own key from MovieDB";
     static final String POSTER_KEY = MainActivity.getContext().getResources()
             .getString(R.string.poster_api);
     static final String DELIMITER = MainActivity.getContext().getResources()
